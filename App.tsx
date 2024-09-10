@@ -4,7 +4,7 @@ import React from 'react';
 const App = () => {
   return (
     <View>
-      <Text className="font-bold text-3xl underline">App.js</Text>
+      <Text className="font-bold text-3xl ">App.js</Text>
     </View>
   );
 };
