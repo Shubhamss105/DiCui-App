@@ -1,59 +1,29 @@
-import React from 'react'
-import { SafeAreaView, View, Text, TouchableOpacity } from 'react-native';
-
+import React from 'react';
+import {SafeAreaView, View, Text} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Gaming from '../assets/images/misc/gaming.svg';
+import CustomButton from '../globalComponents/buttons/CustomButton.js';
 
 const OnboardingScreen = ({navigation}) => {
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#fff',
-      }}>
-      <View style={{marginTop: 20}}>
-        <Text
-          style={{
-            fontFamily: 'Inter-Bold',
-            fontWeight: 'bold',
-            fontSize: 30,
-            color: '#20315f',
-          }}>
-          GAMEON
+    <SafeAreaView className="flex-1 justify-center items-center bg-white px-4">
+      <View className="flex-1 justify-center items-center">
+        <Gaming width={300} height={300} className="transform -rotate-15" />
+        <Text className="text-3xl text-secondary font-bold text-center tracking-wide">
+          Discover Endless{'\n'}
+          Possibilities with DiCui
         </Text>
+        <Text className="text-sm font-pregular text-secondary mt-2 text-center tracking-wide">
+        Your Perfect Dining Experience, Just a Tap Away!
+          </Text>
       </View>
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <Gaming
-          width={300}
-          height={300}
-          style={{transform: [{rotate: '-15deg'}]}}
-        />
-      </View>
-      <TouchableOpacity
-        style={{
-          backgroundColor: '#AD40AF',
-          padding: 20,
-          width: '90%',
-          borderRadius: 10,
-          marginBottom: 50,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-        }}
+
+      {/* Custom Button using Tailwind */}
+      <CustomButton
+        label="Let's Begin"
         onPress={() => navigation.navigate('Login')}>
-        <Text
-          style={{
-            color: 'white',
-            fontSize: 18,
-            textAlign: 'center',
-            fontWeight: 'bold',
-            fontFamily: 'Roboto-MediumItalic',
-          }}>
-          Let's Begin
-        </Text>
         <Icon name="arrow-right" size={22} color="#fff" />
-      </TouchableOpacity>
+      </CustomButton>
     </SafeAreaView>
   );
 };
