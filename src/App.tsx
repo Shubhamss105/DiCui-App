@@ -1,12 +1,18 @@
-import { View, Text } from 'react-native';
 import React from 'react';
 
-const App = () => {
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+
+import AuthStack from './navigation/AuthStack';
+import AppStack from './navigation/AppStack';
+
+function App() {
   return (
-    <View className="flex-1 justify-center items-center bg-white">
-    <Text className="text-5xl font-bold text-black">Hello, Tailwind css!</Text>
-  </View>
+    <NavigationContainer>
+      {/* <AppStack /> */}
+      <AuthStack />
+    </NavigationContainer>
   );
-};
+}
 
 export default App;
