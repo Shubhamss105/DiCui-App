@@ -7,15 +7,12 @@ import {
 } from 'react-native';
 
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import LoginSVG from '../assets/images/misc/login.svg';
 import GoogleSVG from '../assets/images/misc/google.svg';
-import FacebookSVG from '../assets/images/misc/facebook.svg';
-import TwitterSVG from '../assets/images/misc/twitter.svg';
-
-import CustomButton from '../components/CustomButton';
-import InputField from '../components/InputField';
+import CustomButton from '../globalComponents/buttons/CustomButton.js';
+// import InputField from '../components/InputField';
+import InputField from '../globalComponents/inputFields/InputField.js';
 
 const LoginScreen = ({navigation}) => {
   return (
@@ -29,7 +26,7 @@ const LoginScreen = ({navigation}) => {
           />
         </View>
 
-        <Text className="font-medium text-[28px] text-gray-800 mb-7">
+        <Text className="font-medium text-[28px] text-secondary mb-7">
           Login
         </Text>
 
@@ -69,31 +66,22 @@ const LoginScreen = ({navigation}) => {
         <CustomButton label={"Login"} onPress={() => {}} />
 
         <Text className="text-center text-gray-500 mb-7">
-          Or, login with ...
+          Or, login with
         </Text>
 
-        <View className="flex-row justify-between mb-7">
+        <View className="flex-row  mb-7">
           <TouchableOpacity
             onPress={() => {}}
-            className="border border-gray-300 rounded-lg px-7 py-2">
+            className="border border-gray-300 rounded-lg px-7 py-2 w-full justify-center items-center">
             <GoogleSVG height={24} width={24} />
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {}}
-            className="border border-gray-300 rounded-lg px-7 py-2">
-            <FacebookSVG height={24} width={24} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {}}
-            className="border border-gray-300 rounded-lg px-7 py-2">
-            <TwitterSVG height={24} width={24} />
-          </TouchableOpacity>
+         
         </View>
 
         <View className="flex-row justify-center mb-7">
-          <Text>New to the app?</Text>
+          <Text className='text-black'>New to the app?</Text>
           <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-            <Text className="text-purple-700 font-bold"> Register</Text>
+            <Text className="text-primary font-bold"> Register</Text>
           </TouchableOpacity>
         </View>
       </View>
