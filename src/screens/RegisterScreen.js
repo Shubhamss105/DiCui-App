@@ -1,37 +1,25 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {
   SafeAreaView,
   ScrollView,
   View,
   Text,
-  TextInput,
   TouchableOpacity,
 } from 'react-native';
 
-import DatePicker from 'react-native-date-picker';
-
-import InputField from '../components/InputField';
-
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import InputField from '../globalComponents/inputFields/InputField';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 import RegistrationSVG from '../assets/images/misc/registration.svg';
 import GoogleSVG from '../assets/images/misc/google.svg';
-import FacebookSVG from '../assets/images/misc/facebook.svg';
-import TwitterSVG from '../assets/images/misc/twitter.svg';
-import CustomButton from '../components/CustomButton';
+import CustomButton from '../globalComponents/buttons/CustomButton.js';
 
 const RegisterScreen = ({navigation}) => {
-  const [date, setDate] = useState(new Date());
-  const [open, setOpen] = useState(false);
-  const [dobLabel, setDobLabel] = useState('Date of Birth');
-
   return (
-    <SafeAreaView style={{flex: 1, justifyContent: 'center'}}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        style={{paddingHorizontal: 25}}>
-        <View style={{alignItems: 'center'}}>
+    <SafeAreaView className="flex-1 justify-center">
+      <ScrollView showsVerticalScrollIndicator={false} className="px-6">
+        <View className="items-center">
           <RegistrationSVG
             height={300}
             width={300}
@@ -39,70 +27,18 @@ const RegisterScreen = ({navigation}) => {
           />
         </View>
 
-        <Text
-          style={{
-            fontFamily: 'Roboto-Medium',
-            fontSize: 28,
-            fontWeight: '500',
-            color: '#333',
-            marginBottom: 30,
-          }}>
+        <Text className="font-medium text-[28px] text-gray-800 mb-5">
           Register
         </Text>
 
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginBottom: 30,
-          }}>
-          <TouchableOpacity
-            onPress={() => {}}
-            style={{
-              borderColor: '#ddd',
-              borderWidth: 2,
-              borderRadius: 10,
-              paddingHorizontal: 30,
-              paddingVertical: 10,
-            }}>
-            <GoogleSVG height={24} width={24} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {}}
-            style={{
-              borderColor: '#ddd',
-              borderWidth: 2,
-              borderRadius: 10,
-              paddingHorizontal: 30,
-              paddingVertical: 10,
-            }}>
-            <FacebookSVG height={24} width={24} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {}}
-            style={{
-              borderColor: '#ddd',
-              borderWidth: 2,
-              borderRadius: 10,
-              paddingHorizontal: 30,
-              paddingVertical: 10,
-            }}>
-            <TwitterSVG height={24} width={24} />
-          </TouchableOpacity>
-        </View>
-
-        <Text style={{textAlign: 'center', color: '#666', marginBottom: 30}}>
-          Or, register with email ...
-        </Text>
-
         <InputField
-          label={'Full Name'}
+          label={'Name'}
           icon={
             <Ionicons
-              name="person-outline"
+              name="person"
               size={20}
               color="#666"
-              style={{marginRight: 5}}
+              className="mr-2"
             />
           }
         />
@@ -110,11 +46,11 @@ const RegisterScreen = ({navigation}) => {
         <InputField
           label={'Email ID'}
           icon={
-            <MaterialIcons
-              name="alternate-email"
+            <FontAwesome
+              name="envelope"
               size={20}
               color="#666"
-              style={{marginRight: 5}}
+              className="mr-2"
             />
           }
           keyboardType="email-address"
@@ -123,11 +59,11 @@ const RegisterScreen = ({navigation}) => {
         <InputField
           label={'Password'}
           icon={
-            <Ionicons
-              name="ios-lock-closed-outline"
+            <FontAwesome
+              name="lock"
               size={20}
               color="#666"
-              style={{marginRight: 5}}
+              className="mr-2"
             />
           }
           inputType="password"
@@ -136,65 +72,34 @@ const RegisterScreen = ({navigation}) => {
         <InputField
           label={'Confirm Password'}
           icon={
-            <Ionicons
-              name="ios-lock-closed-outline"
+            <FontAwesome
+              name="lock"
               size={20}
               color="#666"
-              style={{marginRight: 5}}
+              className="mr-2"
             />
           }
           inputType="password"
         />
 
-        <View
-          style={{
-            flexDirection: 'row',
-            borderBottomColor: '#ccc',
-            borderBottomWidth: 1,
-            paddingBottom: 8,
-            marginBottom: 30,
-          }}>
-          <Ionicons
-            name="calendar-outline"
-            size={20}
-            color="#666"
-            style={{marginRight: 5}}
-          />
-          <TouchableOpacity onPress={() => setOpen(true)}>
-            <Text style={{color: '#666', marginLeft: 5, marginTop: 5}}>
-              {dobLabel}
-            </Text>
+        <CustomButton label={'Register'} onPress={() => {}} />
+
+        <Text className="text-center text-gray-500 my-3">
+          Or, Register with Google
+        </Text>
+
+        <View className="flex-row justify-between mb-5">
+          <TouchableOpacity
+            onPress={() => {}}
+            className="border border-gray-300 rounded-lg px-7 py-2 w-full justify-center items-center">
+            <GoogleSVG height={24} width={24} />
           </TouchableOpacity>
         </View>
 
-        <DatePicker
-          modal
-          open={open}
-          date={date}
-          mode={'date'}
-          maximumDate={new Date('2005-01-01')}
-          minimumDate={new Date('1980-01-01')}
-          onConfirm={date => {
-            setOpen(false);
-            setDate(date);
-            setDobLabel(date.toDateString());
-          }}
-          onCancel={() => {
-            setOpen(false);
-          }}
-        />
-
-        <CustomButton label={'Register'} onPress={() => {}} />
-
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'center',
-            marginBottom: 30,
-          }}>
+        <View className="flex-row justify-center mb-5">
           <Text>Already registered?</Text>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={{color: '#AD40AF', fontWeight: '700'}}> Login</Text>
+            <Text className="text-primary font-bold"> Login</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

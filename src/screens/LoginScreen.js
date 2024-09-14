@@ -66,7 +66,7 @@ const LoginScreen = ({navigation}) => {
         <CustomButton label={"Login"} onPress={() => {}} />
 
         <Text className="text-center text-gray-500 mb-7">
-          Or, login with
+          Or, login with Google
         </Text>
 
         <View className="flex-row  mb-7">
