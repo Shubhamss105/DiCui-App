@@ -8,7 +8,7 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
-import Carousel from 'react-native-snap-carousel';
+// import Carousel from 'react-native-snap-carousel';
 import Feather from 'react-native-vector-icons/Feather';
 
 import BannerSlider from '../components/BannerSlider';
@@ -82,7 +82,7 @@ export default function HomeScreen({navigation}) {
           </TouchableOpacity>
         </View>
 
-        <Carousel
+        {/* <Carousel
           ref={c => {
             this._carousel = c;
           }}
@@ -91,7 +91,7 @@ export default function HomeScreen({navigation}) {
           sliderWidth={windowWidth - 40}
           itemWidth={300}
           loop={true}
-        />
+        /> */}
 
         <View style={{marginVertical: 20}}>
           <CustomSwitch
