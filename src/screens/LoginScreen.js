@@ -63,7 +63,7 @@ const LoginScreen = ({navigation}) => {
         />
 
         {/* Custom Button for Login */}
-        <CustomButton label={"Login"} onPress={() => {navigation.navigate("HomeScreen")}} />
+        <CustomButton label={"Login"} onPress={() => {navigation.navigate("Home")}} />
 
         <Text className="text-center text-gray-500 mb-7">
           Or, login with Google
