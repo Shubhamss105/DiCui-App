@@ -8,7 +8,9 @@ export default function InputField({
   keyboardType,
   fieldButtonLabel,
   fieldButtonFunction,
-  onChangeText, // Ensure onChangeText is passed down
+  onChangeText,
+  errorMessage, 
+  required, 
 }) {
   return (
     <View className="flex-row border-b border-gray-300 pb-2 mb-6">
@@ -35,6 +37,9 @@ export default function InputField({
         <TouchableOpacity onPress={fieldButtonFunction}>
           <Text className="text-primary font-bold">{fieldButtonLabel}</Text>
         </TouchableOpacity>
+      )}
+      {required && (
+        <Text className="text-red-500">{errorMessage}</Text> // Display error message in red if required
       )}
     </View>
   );

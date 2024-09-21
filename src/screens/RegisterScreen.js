@@ -24,47 +24,53 @@ const RegisterScreen = ({ navigation }) => {
     email: '',
     password: '',
     password_confirmation: '',
-    role: 'user', // Default role set to "user"
+    role: 'user',
   });
   const [loading, setLoading] = useState(false);
-
-  // Debugging: Ensure formData is updating
-  console.log("Form Data:", formData);
+  const [errors, setErrors] = useState({});
 
   const handleInputChange = (name, value) => {
-    console.log(`${name}: ${value}`); // Debugging: log the input change
     setFormData((prevState) => ({
       ...prevState,
       [name]: value,
     }));
+    // Clear errors on input change
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: null }));
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.name) newErrors.name = 'Name is required';
+    if (!formData.email) newErrors.email = 'Email is required';
+    if (!formData.password) newErrors.password = 'Password is required';
+    if (formData.password !== formData.password_confirmation) {
+      newErrors.password_confirmation = 'Passwords do not match';
+    }
+    return newErrors;
   };
 
   const handleRegister = async () => {
-    // Debugging: Check the formData just before registration
-    console.log("Registering with data:", formData);
-
-    if (formData.password !== formData.password_confirmation) {
-      Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: 'Passwords do not match.',
-      });
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
       return;
     }
-
+  
     setLoading(true);
-
+  
+    console.log('Form Data:', formData); // Log formData here
+  
     try {
-      await dispatch(registerUser(formData)).unwrap();
-      
+      const response = await dispatch(registerUser(formData)).unwrap();
+      console.log('API Response:', response); // Log the API response
       Toast.show({
         type: 'success',
         text1: 'Success',
         text2: 'Registration successful!',
       });
-      navigation.goBack(); 
-
+      navigation.goBack();
     } catch (error) {
+      console.error('Registration Error:', error);
       Toast.show({
         type: 'error',
         text1: 'Error',
@@ -74,6 +80,7 @@ const RegisterScreen = ({ navigation }) => {
       setLoading(false);
     }
   };
+  
 
   return (
     <SafeAreaView className="flex-1 justify-center">
@@ -93,28 +100,36 @@ const RegisterScreen = ({ navigation }) => {
         <InputField
           label={'Name'}
           icon={<Ionicons name="person" size={20} color="#666" className="mr-2" />}
-          onChangeText={value => handleInputChange('name', value)} // Handle input change
+          onChangeText={value => handleInputChange('name', value)}
+          errorMessage={errors.name}
+          required
         />
 
         <InputField
           label={'Email ID'}
           icon={<FontAwesome name="envelope" size={20} color="#666" className="mr-2" />}
           keyboardType="email-address"
-          onChangeText={value => handleInputChange('email', value)} // Handle input change
+          onChangeText={value => handleInputChange('email', value)}
+          errorMessage={errors.email}
+          required
         />
 
         <InputField
           label={'Password'}
           icon={<FontAwesome name="lock" size={20} color="#666" className="mr-2" />}
           inputType="password"
-          onChangeText={value => handleInputChange('password', value)} // Handle input change
+          onChangeText={value => handleInputChange('password', value)}
+          errorMessage={errors.password}
+          required
         />
 
         <InputField
           label={'Confirm Password'}
           icon={<FontAwesome name="lock" size={20} color="#666" className="mr-2" />}
           inputType="password"
-          onChangeText={value => handleInputChange('password_confirmation', value)} // Handle input change
+          onChangeText={value => handleInputChange('password_confirmation', value)}
+          errorMessage={errors.password_confirmation}
+          required
         />
 
         {loading ? (

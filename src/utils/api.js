@@ -35,4 +35,19 @@ const apiCall = async (endpoint, method, body = null) => {
   }
 };
 
-export default apiCall;
+// CRUD Functions
+export const apiGet = async (endpoint) => {
+  return await apiCall(endpoint, 'GET');
+};
+
+export const apiPost = async (endpoint, data) => {
+  return await apiCall(endpoint, 'POST', data);
+};
+
+export const apiPut = async (endpoint, data) => {
+  return await apiCall(endpoint, 'PUT', data);
+};
+
+export const apiDelete = async (endpoint) => {
+  return await apiCall(endpoint, 'DELETE');
+};
