@@ -140,19 +140,20 @@ const AuthStack = () => (
 
 // Main App Component
 const App = () => {
+  let isLoggedIn = false
   return (
     <Provider store={store}>
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          {/* Home DrawerNavigator (with Tab and Drawer) accessible to all users */}
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {isLoggedIn ? (
           <Stack.Screen name="Main" component={DrawerNavigator} />
-
-          {/* Authentication Flow */}
+        ) : (
           <Stack.Screen name="Auth" component={AuthStack} />
-        </Stack.Navigator>
-      </NavigationContainer>
-      <Toast/>
-    </Provider>
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
+    <Toast />
+  </Provider>
   );
 };
 

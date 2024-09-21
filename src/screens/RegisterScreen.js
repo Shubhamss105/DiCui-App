@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -7,8 +7,8 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
-import {useDispatch} from 'react-redux';
-import {registerUser} from '../redux/slices/authSlice'; // Adjust the path as needed
+import { useDispatch } from 'react-redux';
+import { registerUser } from '../redux/slices/authSlice';
 import InputField from '../globalComponents/inputFields/InputField';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -17,7 +17,7 @@ import GoogleSVG from '../assets/images/misc/google.svg';
 import CustomButton from '../globalComponents/buttons/CustomButton.js';
 import Toast from 'react-native-toast-message';
 
-const RegisterScreen = ({navigation}) => {
+const RegisterScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     name: '',
@@ -28,11 +28,21 @@ const RegisterScreen = ({navigation}) => {
   });
   const [loading, setLoading] = useState(false);
 
+  // Debugging: Ensure formData is updating
+  console.log("Form Data:", formData);
+
   const handleInputChange = (name, value) => {
-    setFormData({...formData, [name]: value});
+    console.log(`${name}: ${value}`); // Debugging: log the input change
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
+    // Debugging: Check the formData just before registration
+    console.log("Registering with data:", formData);
+
     if (formData.password !== formData.password_confirmation) {
       Toast.show({
         type: 'error',
@@ -43,26 +53,26 @@ const RegisterScreen = ({navigation}) => {
     }
 
     setLoading(true);
-    dispatch(registerUser(formData))
-      .unwrap()
-      .then(() => {
-        Toast.show({
-          type: 'success',
-          text1: 'Success',
-          text2: 'Registration successful!',
-        });
-        navigation.goBack(); // Navigate back to login or another screen
-      })
-      .catch(error => {
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          text2: error.message,
-        });
-      })
-      .finally(() => {
-        setLoading(false);
+
+    try {
+      await dispatch(registerUser(formData)).unwrap();
+      
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: 'Registration successful!',
       });
+      navigation.goBack(); 
+
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: error.message || 'Registration failed!',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -72,7 +82,7 @@ const RegisterScreen = ({navigation}) => {
           <RegistrationSVG
             height={300}
             width={300}
-            style={{transform: [{rotate: '-5deg'}]}}
+            style={{ transform: [{ rotate: '-5deg' }] }}
           />
         </View>
 
@@ -82,49 +92,36 @@ const RegisterScreen = ({navigation}) => {
 
         <InputField
           label={'Name'}
-          icon={
-            <Ionicons name="person" size={20} color="#666" className="mr-2" />
-          }
-          onChangeText={value => handleInputChange('name', value)}
+          icon={<Ionicons name="person" size={20} color="#666" className="mr-2" />}
+          onChangeText={value => handleInputChange('name', value)} // Handle input change
         />
 
         <InputField
           label={'Email ID'}
-          icon={
-            <FontAwesome
-              name="envelope"
-              size={20}
-              color="#666"
-              className="mr-2"
-            />
-          }
+          icon={<FontAwesome name="envelope" size={20} color="#666" className="mr-2" />}
           keyboardType="email-address"
-          onChangeText={value => handleInputChange('email', value)}
+          onChangeText={value => handleInputChange('email', value)} // Handle input change
         />
 
         <InputField
           label={'Password'}
-          icon={
-            <FontAwesome name="lock" size={20} color="#666" className="mr-2" />
-          }
+          icon={<FontAwesome name="lock" size={20} color="#666" className="mr-2" />}
           inputType="password"
-          keyboardType="default"
+          onChangeText={value => handleInputChange('password', value)} // Handle input change
         />
 
         <InputField
           label={'Confirm Password'}
-          icon={
-            <FontAwesome name="lock" size={20} color="#666" className="mr-2" />
-          }
+          icon={<FontAwesome name="lock" size={20} color="#666" className="mr-2" />}
           inputType="password"
-          onChangeText={value =>
-            handleInputChange('password_confirmation', value)
-          }
+          onChangeText={value => handleInputChange('password_confirmation', value)} // Handle input change
         />
 
-        <CustomButton label={'Register'} onPress={handleRegister} />
-
-        {loading && <ActivityIndicator size="large" color="#0000ff" />}
+        {loading ? (
+          <ActivityIndicator size="large" color="#0000ff" />
+        ) : (
+          <CustomButton label={'Register'} onPress={handleRegister} />
+        )}
 
         <Text className="text-center text-gray-500 my-3">
           Or, Register with Google
@@ -145,7 +142,6 @@ const RegisterScreen = ({navigation}) => {
           </TouchableOpacity>
         </View>
       </ScrollView>
-      <Toast ref={ref => Toast.setRef(ref)} />
     </SafeAreaView>
   );
 };

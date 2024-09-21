@@ -1,4 +1,3 @@
-// src/api/api.js
 import { BASE_URL } from './config.js';
 
 const apiCall = async (endpoint, method, body = null) => {
@@ -6,6 +5,7 @@ const apiCall = async (endpoint, method, body = null) => {
     method,
     headers: {
       'Content-Type': 'application/json',
+      Accept: 'application/json', // Ensure we are asking for JSON responses
     },
   };
 
@@ -15,9 +15,19 @@ const apiCall = async (endpoint, method, body = null) => {
 
   try {
     const response = await fetch(`${BASE_URL}${endpoint}`, options);
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
+
+    // Check for non-JSON responses (like HTML errors)
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error('Received non-JSON response');
     }
+
+    if (!response.ok) {
+      // Extract error message from response, if available
+      const errorResponse = await response.json();
+      throw new Error(errorResponse.message || 'Something went wrong');
+    }
+
     return await response.json();
   } catch (error) {
     console.error('API call error:', error);
