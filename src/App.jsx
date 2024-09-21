@@ -19,7 +19,7 @@ import RegisterScreen from './screens/RegisterScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import MessagesScreen from './screens/MessagesScreen';
 import SettingsScreen from './screens/SettingsScreen';
-import CustomDrawer from './components/CustomDrawer'; // Assuming you have a custom drawer component
+import CustomDrawer from './components/CustomDrawer';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
