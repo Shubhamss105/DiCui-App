@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
+import { useSelector } from 'react-redux';
 import Toast from 'react-native-toast-message';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
@@ -69,97 +70,101 @@ const TabNavigator = () => (
 );
 
 // Drawer Navigator
-const DrawerNavigator = ({ isLoggedIn }) => (
-  <Drawer.Navigator
-    drawerContent={(props) => <CustomDrawer {...props} />}
-    screenOptions={{
-      headerShown: false,
-      drawerActiveBackgroundColor: '#aa18ea',
-      drawerActiveTintColor: '#fff',
-      drawerInactiveTintColor: '#333',
-      drawerLabelStyle: {
-        marginLeft: -25,
-        fontFamily: 'Roboto-Medium',
-        fontSize: 15,
-      },
-    }}>
-    <Drawer.Screen 
-      name="HomeTabs" 
-      component={TabNavigator} 
-      options={{
-        drawerIcon: ({ color }) => (
-          <Ionicons name="home-outline" size={22} color={color} />
-        ),
+const DrawerNavigator = () => {
+  const { userToken } = useSelector((state) => state.auth);
+  return (
+    <Drawer.Navigator
+      drawerContent={(props) => <CustomDrawer {...props} />}
+      screenOptions={{
+        headerShown: false,
+        drawerActiveBackgroundColor: '#aa18ea',
+        drawerActiveTintColor: '#fff',
+        drawerInactiveTintColor: '#333',
+        drawerLabelStyle: {
+          marginLeft: -25,
+          fontFamily: 'Roboto-Medium',
+          fontSize: 15,
+        },
       }}
-    />
-    <Drawer.Screen 
-      name="Profile" 
-      component={ProfileScreen}
-      options={{
-        drawerIcon: ({ color }) => (
-          <Ionicons name="person-outline" size={22} color={color} />
-        ),
-      }}
-    />
-    <Drawer.Screen 
-      name="Messages" 
-      component={MessagesScreen}
-      options={{
-        drawerIcon: ({ color }) => (
-          <Ionicons name="chatbox-ellipses-outline" size={22} color={color} />
-        ),
-      }}
-    />
-    <Drawer.Screen 
-      name="Moments" 
-      component={GameDetailsScreen}
-      options={{
-        drawerIcon: ({ color }) => (
-          <Ionicons name="timer-outline" size={22} color={color} />
-        ),
-      }}
-    />
-    <Drawer.Screen 
-      name="Settings" 
-      component={SettingsScreen}
-      options={{
-        drawerIcon: ({ color }) => (
-          <Ionicons name="settings-outline" size={22} color={color} />
-        ),
-      }}
-    />
-    {isLoggedIn ? (
+    >
       <Drawer.Screen 
-        name="Logout" 
-        component={LogoutScreen}
+        name="HomeTabs" 
+        component={TabNavigator} 
         options={{
           drawerIcon: ({ color }) => (
-            <Ionicons name="log-out-outline" size={22} color={color} />
+            <Ionicons name="home-outline" size={22} color={color} />
           ),
         }}
       />
-    ) : (
       <Drawer.Screen 
-        name="Login" 
-        component={LoginScreen}
+        name="Profile" 
+        component={ProfileScreen}
         options={{
           drawerIcon: ({ color }) => (
-            <Ionicons name="log-in-outline" size={22} color={color} />
+            <Ionicons name="person-outline" size={22} color={color} />
           ),
         }}
       />
-    )}
-  </Drawer.Navigator>
-);
+      <Drawer.Screen 
+        name="Messages" 
+        component={MessagesScreen}
+        options={{
+          drawerIcon: ({ color }) => (
+            <Ionicons name="chatbox-ellipses-outline" size={22} color={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen 
+        name="Moments" 
+        component={GameDetailsScreen}
+        options={{
+          drawerIcon: ({ color }) => (
+            <Ionicons name="timer-outline" size={22} color={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen 
+        name="Settings" 
+        component={SettingsScreen}
+        options={{
+          drawerIcon: ({ color }) => (
+            <Ionicons name="settings-outline" size={22} color={color} />
+          ),
+        }}
+      />
+      
+      {userToken ? (
+        <Drawer.Screen 
+          name="Logout" 
+          component={LogoutScreen}
+          options={{
+            drawerIcon: ({ color }) => (
+              <Ionicons name="log-out-outline" size={22} color={color} />
+            ),
+          }}
+        />
+      ) : (
+        <Drawer.Screen 
+          name="Login" 
+          component={LoginScreen}
+          options={{
+            drawerIcon: ({ color }) => (
+              <Ionicons name="log-in-outline" size={22} color={color} />
+            ),
+          }}
+        />
+      )}
+    </Drawer.Navigator>
+  );
+};
+
 
 
 // Auth Stack
-const AuthStack = ({ handleSkipLogin }) => (
+const AuthStack = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-    <Stack.Screen name="Login">
-      {props => <LoginScreen {...props} handleSkipLogin={handleSkipLogin} />}
-    </Stack.Screen>
+    <Stack.Screen name="Login" component={LoginScreen} />
     <Stack.Screen name="Register" component={RegisterScreen} />
   </Stack.Navigator>
 );
@@ -167,39 +172,20 @@ const AuthStack = ({ handleSkipLogin }) => (
 
 // Main App Component
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      const token = await AsyncStorage.getItem('userToken');
-      if (token) {
-        setIsLoggedIn(true);
-      }
-    };
-    checkLoginStatus();
-  }, []);
-
-  // Function to handle skip login
-  const handleSkipLogin = () => {
-    setIsLoggedIn(true);
-  };
 
   return (
     <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-          {/* <Stack.Screen name="Main" component={DrawerNavigator} /> */}
-          <Stack.Screen name="Auth">
-            {props => <AuthStack {...props} handleSkipLogin={handleSkipLogin} />}
-          </Stack.Screen>
-          <Stack.Screen name="Home" options={{ headerShown: false }}>
-            {() => <DrawerNavigator isLoggedIn={isLoggedIn} />}
-          </Stack.Screen>
+         
+          <Stack.Screen name="Auth" component={AuthStack}/>
+          
+          {/* Main App Drawer (with conditional rendering based on login status) */}
+          <Stack.Screen name="Home" component={DrawerNavigator} />
         </Stack.Navigator>
       </NavigationContainer>
       <Toast />
     </Provider>
   );
 };
-
 export default App;

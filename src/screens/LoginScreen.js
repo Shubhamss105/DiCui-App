@@ -10,13 +10,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Toast from 'react-native-toast-message';
+import { CommonActions } from '@react-navigation/native';
 import LoginSVG from '../assets/images/misc/login.svg';
 import GoogleSVG from '../assets/images/misc/google.svg';
 import CustomButton from '../globalComponents/buttons/CustomButton.js';
 import InputField from '../globalComponents/inputFields/InputField.js';
 import { loginUser, loadToken } from '../redux/slices/authSlice';
 
-const LoginScreen = ({ handleSkipLogin }) => {
+const LoginScreen = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const { userToken, loading } = useSelector(state => state.auth);
@@ -124,8 +125,13 @@ const LoginScreen = ({ handleSkipLogin }) => {
         {/* Skip Login Button */}
         <TouchableOpacity
           onPress={() => {
-            handleSkipLogin();
-            navigation.navigate('Home'); // Navigate to Home after skipping
+            // navigation.navigate('Home');
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{ name: 'Home' }],
+              })
+            );
           }}
           className="mt-4">
           <Text className="text-primary text-center">Skip Login</Text>
