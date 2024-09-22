@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -8,6 +8,7 @@ import Toast from 'react-native-toast-message';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import store from './redux/store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Screens
 import HomeScreen from './screens/HomeScreen';
@@ -21,12 +22,13 @@ import ProfileScreen from './screens/ProfileScreen';
 import MessagesScreen from './screens/MessagesScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import CustomDrawer from './components/CustomDrawer';
+import LogoutScreen from './screens/LogoutScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
-// Tab Navigator (Bottom Navigation)
+// Tab Navigator
 const TabNavigator = () => (
   <Tab.Navigator
     screenOptions={{
@@ -66,8 +68,8 @@ const TabNavigator = () => (
   </Tab.Navigator>
 );
 
-// Drawer Navigator (Side Menu Navigation)
-const DrawerNavigator = () => (
+// Drawer Navigator
+const DrawerNavigator = ({ isLoggedIn }) => (
   <Drawer.Navigator
     drawerContent={(props) => <CustomDrawer {...props} />}
     screenOptions={{
@@ -83,7 +85,7 @@ const DrawerNavigator = () => (
     }}>
     <Drawer.Screen 
       name="HomeTabs" 
-      component={TabNavigator}
+      component={TabNavigator} 
       options={{
         drawerIcon: ({ color }) => (
           <Ionicons name="home-outline" size={22} color={color} />
@@ -126,34 +128,77 @@ const DrawerNavigator = () => (
         ),
       }}
     />
+    {isLoggedIn ? (
+      <Drawer.Screen 
+        name="Logout" 
+        component={LogoutScreen}
+        options={{
+          drawerIcon: ({ color }) => (
+            <Ionicons name="log-out-outline" size={22} color={color} />
+          ),
+        }}
+      />
+    ) : (
+      <Drawer.Screen 
+        name="Login" 
+        component={LoginScreen}
+        options={{
+          drawerIcon: ({ color }) => (
+            <Ionicons name="log-in-outline" size={22} color={color} />
+          ),
+        }}
+      />
+    )}
   </Drawer.Navigator>
 );
 
-// Auth Stack (Onboarding/Login/Register)
-const AuthStack = () => (
+
+// Auth Stack
+const AuthStack = ({ handleSkipLogin }) => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-    <Stack.Screen name="Login" component={LoginScreen} />
+    <Stack.Screen name="Login">
+      {props => <LoginScreen {...props} handleSkipLogin={handleSkipLogin} />}
+    </Stack.Screen>
     <Stack.Screen name="Register" component={RegisterScreen} />
   </Stack.Navigator>
 );
 
+
 // Main App Component
 const App = () => {
-  let isLoggedIn = false
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      const token = await AsyncStorage.getItem('userToken');
+      if (token) {
+        setIsLoggedIn(true);
+      }
+    };
+    checkLoginStatus();
+  }, []);
+
+  // Function to handle skip login
+  const handleSkipLogin = () => {
+    setIsLoggedIn(true);
+  };
+
   return (
     <Provider store={store}>
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {isLoggedIn ? (
-          <Stack.Screen name="Main" component={DrawerNavigator} />
-        ) : (
-          <Stack.Screen name="Auth" component={AuthStack} />
-        )}
-      </Stack.Navigator>
-    </NavigationContainer>
-    <Toast />
-  </Provider>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          {/* <Stack.Screen name="Main" component={DrawerNavigator} /> */}
+          <Stack.Screen name="Auth">
+            {props => <AuthStack {...props} handleSkipLogin={handleSkipLogin} />}
+          </Stack.Screen>
+          <Stack.Screen name="Home" options={{ headerShown: false }}>
+            {() => <DrawerNavigator isLoggedIn={isLoggedIn} />}
+          </Stack.Screen>
+        </Stack.Navigator>
+      </NavigationContainer>
+      <Toast />
+    </Provider>
   );
 };
 

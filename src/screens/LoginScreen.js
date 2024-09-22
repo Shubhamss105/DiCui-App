@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   SafeAreaView,
   View,
@@ -6,22 +6,35 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Toast from 'react-native-toast-message';
 import LoginSVG from '../assets/images/misc/login.svg';
 import GoogleSVG from '../assets/images/misc/google.svg';
 import CustomButton from '../globalComponents/buttons/CustomButton.js';
 import InputField from '../globalComponents/inputFields/InputField.js';
-import { loginUser } from '../redux/slices/authSlice';  // Assuming you're using Redux for state management
+import { loginUser, loadToken } from '../redux/slices/authSlice';
 
-const LoginScreen = ({ navigation }) => {
+const LoginScreen = ({ handleSkipLogin }) => {
   const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const { userToken, loading } = useSelector(state => state.auth);
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
-  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    dispatch(loadToken());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (userToken) {
+      navigation.navigate('Home');
+    }
+  }, [userToken, navigation]);
 
   const handleInputChange = (name, value) => {
     setFormData(prevState => ({
@@ -40,29 +53,20 @@ const LoginScreen = ({ navigation }) => {
       return;
     }
 
-    setLoading(true);
     try {
-      // Dispatching login action to Redux (if you are using Redux for authentication)
       await dispatch(loginUser(formData)).unwrap();
-      
-      // Show success message
       Toast.show({
         type: 'success',
         text1: 'Success',
         text2: 'Login successful!',
       });
-
-      // Navigate to Home screen
-      navigation.navigate('Home');
-
+      // The user will be automatically navigated to 'Home' because of the token
     } catch (error) {
       Toast.show({
         type: 'error',
         text1: 'Error',
         text2: error.message || 'Login failed!',
       });
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -84,7 +88,14 @@ const LoginScreen = ({ navigation }) => {
         {/* Input Field for Email */}
         <InputField
           label={'Email ID'}
-          icon={<FontAwesome name="envelope" size={20} color="#666" className="mr-2" />}
+          icon={
+            <FontAwesome
+              name="envelope"
+              size={20}
+              color="#666"
+              className="mr-2"
+            />
+          }
           keyboardType="email-address"
           onChangeText={value => handleInputChange('email', value)}
         />
@@ -92,10 +103,14 @@ const LoginScreen = ({ navigation }) => {
         {/* Input Field for Password */}
         <InputField
           label={'Password'}
-          icon={<FontAwesome name="lock" size={20} color="#666" className="mr-2" />}
+          icon={
+            <FontAwesome name="lock" size={20} color="#666" className="mr-2" />
+          }
           inputType="password"
-          fieldButtonLabel={"Forgot?"}
-          fieldButtonFunction={() => { /* handle password reset */ }}
+          fieldButtonLabel={'Forgot?'}
+          fieldButtonFunction={() => {
+            /* handle password reset */
+          }}
           onChangeText={value => handleInputChange('password', value)}
         />
 
@@ -103,23 +118,35 @@ const LoginScreen = ({ navigation }) => {
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (
-          <CustomButton label={"Login"} onPress={handleLogin} />
+          <CustomButton label={'Login'} onPress={handleLogin} />
         )}
+
+        {/* Skip Login Button */}
+        <TouchableOpacity
+          onPress={() => {
+            handleSkipLogin();
+            navigation.navigate('Home'); // Navigate to Home after skipping
+          }}
+          className="mt-4">
+          <Text className="text-primary text-center">Skip Login</Text>
+        </TouchableOpacity>
 
         <Text className="text-center text-gray-500 mb-7">
           Or, login with Google
         </Text>
 
-        <View className="flex-row  mb-7">
+        <View className="flex-row mb-7">
           <TouchableOpacity
-            onPress={() => { /* Handle Google Login */ }}
+            onPress={() => {
+              /* Handle Google Login */
+            }}
             className="border border-gray-300 rounded-lg px-7 py-2 w-full justify-center items-center">
             <GoogleSVG height={24} width={24} />
           </TouchableOpacity>
         </View>
 
         <View className="flex-row justify-center mb-7">
-          <Text className='text-black'>New to the app?</Text>
+          <Text className="text-black">New to the app?</Text>
           <TouchableOpacity onPress={() => navigation.navigate('Register')}>
             <Text className="text-primary font-bold"> Register</Text>
           </TouchableOpacity>

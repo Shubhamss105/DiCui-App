@@ -8,8 +8,8 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
-// import Carousel from 'react-native-snap-carousel';
 import Feather from 'react-native-vector-icons/Feather';
+import { DrawerActions } from '@react-navigation/native'; // Import DrawerActions
 
 import BannerSlider from '../components/BannerSlider';
 import {windowWidth} from '../utils/Dimensions';
@@ -41,7 +41,8 @@ export default function HomeScreen({navigation}) {
           <Text style={{fontSize: 18, fontFamily: 'Roboto-Medium',color:'black'}}>
             Hello John Doe
           </Text>
-          <TouchableOpacity onPress={() => navigation.openDrawer()}>
+          <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
+            {/* Use DrawerActions to open the drawer */}
             <ImageBackground
               source={require('../assets/images/user-profile.jpg')}
               style={{width: 35, height: 35}}
@@ -81,17 +82,6 @@ export default function HomeScreen({navigation}) {
             <Text style={{color: '#0aada8'}}>See all</Text>
           </TouchableOpacity>
         </View>
-
-        {/* <Carousel
-          ref={c => {
-            this._carousel = c;
-          }}
-          data={sliderData}
-          renderItem={renderBanner}
-          sliderWidth={windowWidth - 40}
-          itemWidth={300}
-          loop={true}
-        /> */}
 
         <View style={{marginVertical: 20}}>
           <CustomSwitch

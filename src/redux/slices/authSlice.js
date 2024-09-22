@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
 import {apiPost} from '../../utils/api';
 
 const initialState = {
@@ -14,12 +15,12 @@ export const loginUser = createAsyncThunk(
   'login',
   async (userData, { rejectWithValue }) => {
     try {
-      // API call to the login endpoint
       const response = await apiPost('/login', userData);
-      return response;
+      const { token, user } = response;
+      await AsyncStorage.setItem('userToken', token);
+      return { token, user };
     } catch (error) {
-      // Rejecting with error message for better error handling
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.message || 'Login failed');
     }
   }
 );
@@ -30,7 +31,23 @@ export const registerUser = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const response = await apiPost('/register', userData);
+      await AsyncStorage.setItem('userToken', response.token);
       return response;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const loadToken = createAsyncThunk(
+  'loadToken',
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (token) {
+        return { token };
+      }
+      return { token: null };
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -49,6 +66,8 @@ const authSlice = createSlice({
       state.userToken = null;
       state.error = null;
       state.success = false;
+
+      AsyncStorage.removeItem('userToken');
     },
   },
   extraReducers: (builder) => {
@@ -87,6 +106,12 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload || 'Failed to register';
         state.success = false;
+      })
+       .addCase(loadToken.fulfilled, (state, action) => {
+        state.userToken = action.payload.token;
+      })
+      .addCase(loadToken.rejected, (state, action) => {
+        state.error = action.payload || 'Failed to load token';
       });
   },
 });
