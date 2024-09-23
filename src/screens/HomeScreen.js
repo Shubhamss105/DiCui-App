@@ -9,8 +9,8 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
-import { DrawerActions } from '@react-navigation/native'; // Import DrawerActions
-
+import { DrawerActions } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 import BannerSlider from '../components/BannerSlider';
 import {windowWidth} from '../utils/Dimensions';
 
@@ -19,6 +19,10 @@ import CustomSwitch from '../components/CustomSwitch';
 import ListItem from '../components/ListItem';
 
 export default function HomeScreen({navigation}) {
+
+  // const { userToken, userInfo } = useSelector((state) => state.auth);
+
+
   const [gamesTab, setGamesTab] = useState(1);
 
   const renderBanner = ({item, index}) => {
@@ -39,7 +43,8 @@ export default function HomeScreen({navigation}) {
             marginBottom: 20,
           }}>
           <Text style={{fontSize: 18, fontFamily: 'Roboto-Medium',color:'black'}}>
-            Hello John Doe
+            {/* Hello {userToken ? userInfo.name : 'Guest'} */}
+            Hello
           </Text>
           <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
             {/* Use DrawerActions to open the drawer */}

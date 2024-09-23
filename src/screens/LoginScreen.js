@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigation } from '@react-navigation/native';
+// import { useNavigation } from '@react-navigation/native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Toast from 'react-native-toast-message';
 import { CommonActions } from '@react-navigation/native';
@@ -17,9 +17,9 @@ import CustomButton from '../globalComponents/buttons/CustomButton.js';
 import InputField from '../globalComponents/inputFields/InputField.js';
 import { loginUser, loadToken } from '../redux/slices/authSlice';
 
-const LoginScreen = () => {
+const LoginScreen = ({navigation}) => {
   const dispatch = useDispatch();
-  const navigation = useNavigation();
+  // const navigation = useNavigation();
   const { userToken, loading } = useSelector(state => state.auth);
 
   const [formData, setFormData] = useState({
@@ -27,15 +27,15 @@ const LoginScreen = () => {
     password: '',
   });
 
-  useEffect(() => {
-    dispatch(loadToken());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(loadToken());
+  // }, [dispatch]);
 
-  useEffect(() => {
-    if (userToken) {
-      navigation.navigate('Home');
-    }
-  }, [userToken, navigation]);
+  // useEffect(() => {
+  //   if (userToken) {
+  //     navigation.navigate('Home');
+  //   }
+  // }, [userToken, navigation]);
 
   const handleInputChange = (name, value) => {
     setFormData(prevState => ({
@@ -53,23 +53,30 @@ const LoginScreen = () => {
       });
       return;
     }
-
+  
     try {
       await dispatch(loginUser(formData)).unwrap();
       Toast.show({
         type: 'success',
         text1: 'Success',
-        text2: 'Login successful!',
+        text2: 'OTP sent to your email, Please Verify it!',
       });
-      // The user will be automatically navigated to 'Home' because of the token
+      navigation.navigate('OTP',{ email: formData.email });
+      // navigation.reset({
+      //   index: 0,
+      //   routes: [{ name: 'OTP', params: { email: formData.email } }],
+      // });
+      
     } catch (error) {
+      console.log(error)
       Toast.show({
         type: 'error',
         text1: 'Error',
-        text2: error.message || 'Login failed!',
+        text2: error || 'Login failed!',
       });
     }
   };
+  
 
   return (
     <SafeAreaView className="flex-1 justify-center">
