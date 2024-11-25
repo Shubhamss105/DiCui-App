@@ -26,14 +26,14 @@ const OTPScreen = ({ route }) => {
 
     try {
       const response = await dispatch(verifyOtp({ otp, email })).unwrap();
-      console.log(response)
+      console.log('responseee==>',response)
       if (response.token) {
         Toast.show({
           type: 'success',
           text1: 'Success',
           text2: 'OTP verified successfully!',
         });
-        navigation.navigate('Home');
+        navigation.navigate('Main');
       } else {
         Toast.show({
           type: 'error',
@@ -53,13 +53,15 @@ const OTPScreen = ({ route }) => {
 
   return (
     <View className="flex-1 justify-center items-center px-4">
-      <Text className="text-xl font-semibold mb-4 text-black">Enter OTP</Text>
+      <Text className="font-semibold mb-4 text-black text-center text-2xl tracking-wide">Verification Code</Text>
+      <Text className="font-normal mb-4 text-gray-500 text-center text-base">We have sent the verification code on your email address</Text>
       <TextInput
         placeholder="Enter OTP"
         value={otp}
         onChangeText={setOtp}
         keyboardType="numeric"
-        className="border-b border-gray-300 w-full text-center text-lg mb-4 text-gray-500"
+        className="border-b border-gray-300 w-full text-center text-lg mb-4 placeholder:text-gray-700"
+        placeholderTextColor="gray"
       />
 
       {loading ? (

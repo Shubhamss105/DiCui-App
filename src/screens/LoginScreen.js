@@ -19,23 +19,12 @@ import { loginUser, loadToken } from '../redux/slices/authSlice';
 
 const LoginScreen = ({navigation}) => {
   const dispatch = useDispatch();
-  // const navigation = useNavigation();
-  const { userToken, loading } = useSelector(state => state.auth);
+  const { loading } = useSelector(state => state.auth);
 
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
-
-  // useEffect(() => {
-  //   dispatch(loadToken());
-  // }, [dispatch]);
-
-  // useEffect(() => {
-  //   if (userToken) {
-  //     navigation.navigate('Home');
-  //   }
-  // }, [userToken, navigation]);
 
   const handleInputChange = (name, value) => {
     setFormData(prevState => ({
@@ -46,36 +35,33 @@ const LoginScreen = ({navigation}) => {
 
   const handleLogin = async () => {
     if (!formData.email || !formData.password) {
-      Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: 'Please fill in both email and password.',
-      });
-      return;
+        Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: 'Please fill in both email and password.',
+        });
+        return;
     }
-  
+
     try {
-      await dispatch(loginUser(formData)).unwrap();
-      Toast.show({
-        type: 'success',
-        text1: 'Success',
-        text2: 'OTP sent to your email, Please Verify it!',
-      });
-      navigation.navigate('OTP',{ email: formData.email });
-      // navigation.reset({
-      //   index: 0,
-      //   routes: [{ name: 'OTP', params: { email: formData.email } }],
-      // });
-      
+        await dispatch(loginUser(formData)).unwrap();
+        Toast.show({
+            type: 'success',
+            text1: 'Success',
+            text2: 'OTP sent to your email, Please Verify it!',
+        });
+        // Navigate to the OTP screen in the Auth Stack
+        navigation.navigate('OTP', { email: formData.email });
     } catch (error) {
-      console.log(error)
-      Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: error || 'Login failed!',
-      });
+        console.log(error);
+        Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: error || 'Login failed!',
+        });
     }
-  };
+};
+
   
 
   return (
@@ -136,7 +122,7 @@ const LoginScreen = ({navigation}) => {
             navigation.dispatch(
               CommonActions.reset({
                 index: 0,
-                routes: [{ name: 'Home' }],
+                routes: [{ name: 'Main' }],
               })
             );
           }}
