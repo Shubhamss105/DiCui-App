@@ -6,7 +6,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 const Header = ({navigation}) => {
   return (
 
-      <View className="flex px-4 mb-4">
+      <View className="flex px-4 mb-2">
         <View className="flex flex-row items-center justify-between mt-4">
           <View className='flex-row items-center'>
           <Ionicons name="location" size={24} color="white" />
