@@ -5,7 +5,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const Header = ({navigation}) => {
   return (
-    <LinearGradient colors={[ '#1A1A1A','#000']}>
+
       <View className="flex px-4 mb-4">
         <View className="flex flex-row items-center justify-between mt-4">
           <View className='flex-row items-center'>
@@ -38,7 +38,7 @@ const Header = ({navigation}) => {
          
         </View>
       </View>
-    </LinearGradient>
+
   );
 };
 
