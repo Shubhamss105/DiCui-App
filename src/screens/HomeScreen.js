@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, ScrollView, Pressable, View, Text, Alert } from 'react-native';
+import { SafeAreaView, ScrollView, Pressable, View, Text, ToastAndroid, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import messaging from '@react-native-firebase/messaging';
 import Header from '../components/Home/Header.jsx';
@@ -46,16 +46,20 @@ export default function HomeScreen({ navigation }) {
     // Foreground message handler
     const unsubscribeForeground = messaging().onMessage(async (remoteMessage) => {
       console.log('Notification received in foreground:', remoteMessage);
-      Alert.alert(
-        remoteMessage.notification.title,
-        remoteMessage.notification.body
-      );
+      // Show a toast message instead of an alert
+      const { title, body } = remoteMessage.notification || {};
+      if (title && body) {
+        if (Platform.OS === 'android') {
+          ToastAndroid.show(`${title}: ${body}`, ToastAndroid.LONG);
+        } else {
+          console.log(`${title}: ${body}`); // For iOS, replace with a library like react-native-toast-message
+        }
+      }
     });
 
-    // Background message handler (while app is in background)
-    messaging().setBackgroundMessageHandler(async (remoteMessage) => {
-      console.log('Notification received in background:', remoteMessage);
-    });
+    // messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+    //   console.log('Notification received in background:', remoteMessage);
+    // });
 
     // Notification opened from a quit state
     messaging().onNotificationOpenedApp((remoteMessage) => {
