@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "272670330124",
+    "project_id": "dicui-c716a",
+    "storage_bucket": "dicui-c716a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:272670330124:android:05b369c5686a8d9bc08d29",
+        "android_client_info": {
+          "package_name": "com.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJ1mF-H3L12Fyq2MsXeJ7yVahmG9WJxQE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

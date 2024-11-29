@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { SafeAreaView, ScrollView, Pressable, View, Text } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { SafeAreaView, ScrollView, Pressable, View, Text, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import messaging from '@react-native-firebase/messaging';
 import Header from '../components/Home/Header.jsx';
 import QRScanner from '../components/Home/QRScanner.jsx';
 import Banner from '../components/Home/Banner.jsx';
@@ -23,12 +24,71 @@ export default function HomeScreen({ navigation }) {
     setScannedLink(data);
   };
 
+  useEffect(() => {
+    const getFCMToken = async () => {
+      // Request permission for push notifications
+      const authStatus = await messaging().requestPermission();
+      const enabled =
+        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+      if (enabled) {
+        const token = await messaging().getToken();
+        console.log('FCM Token:', token); // Log the FCM token for debugging
+      } else {
+        console.warn('Push notification permissions not granted.');
+      }
+    };
+
+    // Check FCM token
+    getFCMToken();
+
+    // Foreground message handler
+    const unsubscribeForeground = messaging().onMessage(async (remoteMessage) => {
+      console.log('Notification received in foreground:', remoteMessage);
+      Alert.alert(
+        remoteMessage.notification.title,
+        remoteMessage.notification.body
+      );
+    });
+
+    // Background message handler (while app is in background)
+    messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+      console.log('Notification received in background:', remoteMessage);
+    });
+
+    // Notification opened from a quit state
+    messaging().onNotificationOpenedApp((remoteMessage) => {
+      console.log('Notification caused app to open from background state:', remoteMessage);
+      if (remoteMessage?.data?.route) {
+        navigation.navigate(remoteMessage.data.route); // Navigate to specific screen
+      }
+    });
+
+    // Check if app was opened by a notification when it was terminated
+    messaging()
+      .getInitialNotification()
+      .then((remoteMessage) => {
+        if (remoteMessage) {
+          console.log('Notification caused app to open from quit state:', remoteMessage);
+          if (remoteMessage?.data?.route) {
+            navigation.navigate(remoteMessage.data.route); // Navigate to specific screen
+          }
+        }
+      });
+
+    return () => {
+      // Cleanup the foreground listener
+      unsubscribeForeground();
+    };
+  }, [navigation]);
+
   return (
     <SafeAreaView className="flex-1 bg-primary">
       <ScrollView className="flex-1">
         <Header navigation={navigation} />
         <View className="px-4">
-          <Banner/>
+          <Banner />
           {scanning ? (
             <QRScanner onClose={handleQRCodeClose} onScan={handleQRCodeResult} />
           ) : (
@@ -41,7 +101,7 @@ export default function HomeScreen({ navigation }) {
               </Text>
             </Pressable>
           )}
-          {/* {scannedLink ? <Text>{scannedLink}</Text> : null} */}
+          {scannedLink ? <Text>{scannedLink}</Text> : null}
         </View>
       </ScrollView>
     </SafeAreaView>
